@@ -5,6 +5,7 @@ COPY package*.json ./
 RUN npm ci --omit=dev
 
 FROM node:22-bookworm-slim
+# Azure App Service injects PORT and NODE_ENV via App Settings.
 ENV NODE_ENV=production PORT=3000
 WORKDIR /app
 COPY --from=dependencies /app/node_modules ./node_modules

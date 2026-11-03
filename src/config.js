@@ -1,6 +1,8 @@
 const path = require('node:path');
 require('dotenv').config();
 
+// Azure App Service should inject runtime settings via App Settings/Key Vault,
+// keeping secrets out of source control and local files.
 const root = path.resolve(__dirname, '..');
 const dbProvider = process.env.DB_PROVIDER || 'sqlite';
 if (!['sqlite', 'sqlserver'].includes(dbProvider)) {
