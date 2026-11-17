@@ -69,12 +69,15 @@ function createApp(repository) {
       res.json(order);
     } catch (error) { next(error); }
   });
-  app.post('/api/ai/recommendations', async (req, res, next) => {
-    if (!config.aiEnabled) return res.status(501).json({ error: 'Integração com Azure AI Foundry será habilitada na etapa de AI.' });
-    if (!aiClient.isConfigured()) return res.status(503).json({ error: 'Conector de AI habilitado, mas endpoint/credenciais não configurados.' });
+  app.post("/api/ai/recommendations", async (req, res, next) => {
     try {
-      const interest = typeof req.body?.interest === 'string' ? req.body.interest : '';
+      const interest = typeof req.body?.interest === "string" ? req.body.interest : "";
       const products = await repository.listProducts();
+      if (config.aiMode === "demo-local") {
+        return res.json(aiClient.recommendDemo({ products, interest }));
+      }
+      if (!config.aiEnabled) return res.status(501).json({ error: "Integração com Azure AI Foundry desabilitada." });
+      if (!aiClient.isConfigured()) return res.status(503).json({ error: "Endpoint ou credenciais não configurados." });
       const result = await aiClient.recommend({ products, interest });
       res.json(result);
     } catch (error) { next(error); }

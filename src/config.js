@@ -40,6 +40,7 @@ module.exports = {
   dbProvider,
   sqlitePath: path.resolve(root, process.env.SQLITE_PATH || './data/loja.db'),
   sql,
+  aiMode: process.env.AI_MODE || 'demo-local',
   aiEnabled: process.env.AI_ENABLED === 'true',
   ai: {
     endpoint: process.env.AZURE_OPENAI_ENDPOINT,

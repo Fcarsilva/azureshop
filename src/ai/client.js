@@ -54,4 +54,20 @@ async function recommend({ products, interest }) {
   }
 }
 
-module.exports = { isConfigured, recommend };
+function recommendDemo({ products, interest }) {
+  const terms = (interest || "").toLowerCase().split(/s+/).filter(Boolean);
+  const available = products.filter((p) => Number(p.stock) > 0);
+  const ranked = available.map((p) => ({
+    product: p,
+    score: terms.filter((t) => (p.name + " " + p.description).toLowerCase().includes(t)).length
+  }));
+  const selected = ranked.sort((a, b) => b.score - a.score)
+    .filter((item) => item.score > 0).slice(0, 3).map((item) => item.product);
+  const productsToShow = selected.length ? selected : available.slice(0, 3);
+  const recommendation = productsToShow.map((p) =>
+    "- " + p.name + " (R$ " + Number(p.price).toFixed(2) + "): " + p.description
+  ).join("\n");
+  return { recommendation: recommendation || "Nenhum produto disponível.", model: "demo-local" };
+}
+
+module.exports = { isConfigured, recommend, recommendDemo };
